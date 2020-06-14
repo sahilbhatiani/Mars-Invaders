@@ -13,7 +13,7 @@ screen = pygame.display.set_mode((800,600))
 background = pygame.image.load("background.png")
 
 #Title and Icon 
-pygame.display.set_caption("Space Invaders")
+pygame.display.set_caption("Mars Invaders")
 icon = pygame.image.load('spaceship.png')
 pygame.display.set_icon(icon)
 
@@ -35,8 +35,8 @@ for i in range(num_of_enemies):
     enemeyImg.append(pygame.image.load('space_invader.png'))
     enemeyX.append(random.randint(0,735))
     enemeyY.append(random.randint(50,150))
-    enemeyX_change.append(4)
-    enemeyY_change.append(40)
+    enemeyX_change.append(2)
+    enemeyY_change.append(10)
 
 #Bullet 
 
@@ -45,7 +45,7 @@ for i in range(num_of_enemies):
 bulletImg = pygame.image.load('bullet.png')
 bulletX =  0
 bulletY =  480
-bulletY_change = 10
+bulletY_change = 5
 bullet_state = "ready"
 
 #Score tracker
@@ -53,6 +53,13 @@ score_value = 0
 font = pygame.font.Font('Done Perfectly.ttf',40)
 textX = 10
 textY = 10
+
+#Game Over
+over_font = pygame.font.Font("Done Perfectly.ttf",64)
+
+def game_over():
+    over_render = over_font.render("GAME OVER",True,(255,255,255))
+    screen.blit(over_render,(200,250))
 
 def show_score(x,y):
     score = font.render("Score: " + str(score_value),True,(255,255,255))
@@ -96,9 +103,9 @@ while running:
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                playerX_change = -5             
+                playerX_change = -3             
             if event.key == pygame.K_RIGHT:
-                playerX_change = 5
+                playerX_change = 3
             if event.key == pygame.K_SPACE:
                 if bullet_state == "ready":
                     bulletX = playerX
@@ -116,13 +123,21 @@ while running:
         playerX = 0
 
     #Setting boundaries for the invader
+
     for i in range(num_of_enemies):
+
+        if enemeyY[i] > 440:
+            for j in range(num_of_enemies):
+                enemeyY[j] = 2000
+            game_over()
+            break
+
         enemeyX[i] += enemeyX_change[i]
         if enemeyX[i]>736:
-            enemeyX_change[i] = -4
+            enemeyX_change[i] = -2
             enemeyY[i] += enemeyY_change[i]
         if enemeyX[i]<0:
-            enemeyX_change[i] = 4 
+            enemeyX_change[i] = 2 
             enemeyY[i] += enemeyY_change[i]
 
         #Collsion
@@ -134,10 +149,11 @@ while running:
             enemeyX[i] =  random.randint(0,735)
             enemeyY[i] = random.randint(50,150)
         enemy(enemeyX[i],enemeyY[i],i)
+
     #Bullet movement
     if bullet_state == "fire":
         fire_bullet(bulletX,bulletY)
-        bulletY -=10
+        bulletY -=5
     if bulletY<0:
         bullet_state = "ready"
         bulletY = 480
