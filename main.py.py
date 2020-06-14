@@ -3,6 +3,9 @@ import pygame
 import random
 import math
 
+speed = 4 #Allows control of the speed of the whole game.
+clock = pygame.time.Clock()
+
 #Initialize pygame
 pygame.init()
 
@@ -35,7 +38,7 @@ for i in range(num_of_enemies):
     enemeyImg.append(pygame.image.load('space_invader.png'))
     enemeyX.append(random.randint(0,735))
     enemeyY.append(random.randint(50,150))
-    enemeyX_change.append(2)
+    enemeyX_change.append(2*speed)
     enemeyY_change.append(30)
 
 #Bullet 
@@ -45,7 +48,7 @@ for i in range(num_of_enemies):
 bulletImg = pygame.image.load('bullet.png')
 bulletX =  0
 bulletY =  480
-bulletY_change = 5
+bulletY_change = 5 * speed
 bullet_state = "ready"
 
 #Score tracker
@@ -89,6 +92,8 @@ def isCollision(enemeyX,enemeyY,bulletX,bulletY):
 #Game Loop
 running = True
 while running:
+    pygame.display.flip()
+    clock.tick(30)
 
     #RGB background
     #screen.fill((0,0,0))
@@ -103,9 +108,9 @@ while running:
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                playerX_change = -3             
+                playerX_change = -3*speed             
             if event.key == pygame.K_RIGHT:
-                playerX_change = 3
+                playerX_change = 3*speed
             if event.key == pygame.K_SPACE:
                 if bullet_state == "ready":
                     bulletX = playerX
@@ -134,10 +139,10 @@ while running:
 
         enemeyX[i] += enemeyX_change[i]
         if enemeyX[i]>736:
-            enemeyX_change[i] = -2
+            enemeyX_change[i] = -2*speed
             enemeyY[i] += enemeyY_change[i]
         if enemeyX[i]<0:
-            enemeyX_change[i] = 2 
+            enemeyX_change[i] = 2*speed
             enemeyY[i] += enemeyY_change[i]
 
         #Collsion
@@ -153,7 +158,7 @@ while running:
     #Bullet movement
     if bullet_state == "fire":
         fire_bullet(bulletX,bulletY)
-        bulletY -=5
+        bulletY -=5*speed
     if bulletY<0:
         bullet_state = "ready"
         bulletY = 480
