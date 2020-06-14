@@ -36,7 +36,7 @@ for i in range(num_of_enemies):
     enemeyX.append(random.randint(0,735))
     enemeyY.append(random.randint(50,150))
     enemeyX_change.append(2)
-    enemeyY_change.append(10)
+    enemeyY_change.append(30)
 
 #Bullet 
 
