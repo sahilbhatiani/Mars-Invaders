@@ -5,6 +5,7 @@ Made using Pygame
 
 Instructions:
 1. Use Arrow keys to move the spaceship horizontally.
-2. Use the space key to shoot.
+2. Use z to shoot the small bullet (Only works on blue enemies)
+3. Use x to shoot the big bullet (Only works on green enemies)
 
 
