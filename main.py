@@ -3,6 +3,7 @@ import pygame
 import random
 import math
 
+
 speed = 4 #Allows control of the speed of the whole game.
 clock = pygame.time.Clock()
 
@@ -52,6 +53,9 @@ bulletX =  0
 bulletY =  480
 bulletY_change = 5 * speed
 bullet_state = "ready"
+big_bulletImg = pygame.image.load('big_bullet.png')
+
+
 
 #Score tracker
 score_value = 0
@@ -77,10 +81,10 @@ def player(x,y):
 def enemy(x,y,i):
     screen.blit(enemeyImg[i],(x, y))
 
-def fire_bullet(x,y):
+def fire_bullet(x,y,img):
     global bullet_state
     bullet_state = "fire"
-    screen.blit(bulletImg,(x+16,y+10))
+    screen.blit(img,(x+16,y+10))
 
 def isCollision(enemeyX,enemeyY,bulletX,bulletY):
     distance = math.sqrt(math.pow(enemeyX-bulletX,2) + math.pow(enemeyY-bulletY,2))
@@ -89,8 +93,14 @@ def isCollision(enemeyX,enemeyY,bulletX,bulletY):
     else:
         return False
 
+hit_this_dude = random.randrange(0,len(enemeyImg))
+enemeyImg[hit_this_dude] = pygame.image.load('shoot_this_dude.png')
+
 new_enemy_timer = 100
 tick = 0
+
+use_bullet = 0
+
 #Game Loop
 running = True
 while running:
@@ -110,9 +120,9 @@ while running:
         enemeyY_change.append(30)
         num_of_enemies = len(enemeyImg)
         tick = 0
-        if(new_enemy_timer>33):
+        if(new_enemy_timer>70):
             new_enemy_timer -= 5
-        print(new_enemy_timer)
+       
 
 
 
@@ -132,10 +142,16 @@ while running:
                 playerX_change = -3*speed             
             if event.key == pygame.K_RIGHT:
                 playerX_change = 3*speed
-            if event.key == pygame.K_SPACE:
+            if event.key == pygame.K_z:
                 if bullet_state == "ready":
                     bulletX = playerX
-                    fire_bullet(bulletX,bulletY)
+                    fire_bullet(bulletX,bulletY,bulletImg)
+                    use_bullet = 0
+            if event.key == pygame.K_x:
+                if bullet_state == "ready":
+                    bulletX = playerX
+                    fire_bullet(bulletX,bulletY,big_bulletImg)
+                    use_bullet = 1
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:    
                 playerX_change = 0
@@ -179,8 +195,22 @@ while running:
 
         enemy(enemeyX[i],enemeyY[i],i)
 
+
+
     #Deletes invader that has been hit
-    if hit_invader_index != -1:
+    if hit_invader_index == hit_this_dude and use_bullet == 1:
+        del enemeyImg[hit_invader_index]
+        del enemeyX[hit_invader_index]
+        del enemeyY[hit_invader_index]
+        del enemeyX_change[hit_invader_index]
+        del enemeyY_change[hit_invader_index]
+        num_of_enemies = len(enemeyImg) #updating enemy list number
+        hit_this_dude = random.randrange(0,len(enemeyImg))
+        enemeyImg[hit_this_dude] = pygame.image.load('shoot_this_dude.png')
+
+    elif hit_invader_index != hit_this_dude and hit_invader_index != -1 and use_bullet == 0:
+        print("Index: " + str(hit_invader_index))
+        print("Len: " + str(len(enemeyImg)))
         del enemeyImg[hit_invader_index]
         del enemeyX[hit_invader_index]
         del enemeyY[hit_invader_index]
@@ -188,10 +218,19 @@ while running:
         del enemeyY_change[hit_invader_index]
         num_of_enemies = len(enemeyImg) #updating enemy list number
 
+        #To keep track of the big_enemy after list change
+        if hit_invader_index<hit_this_dude:
+            hit_this_dude -= 1
+
+
+
 
     #Bullet movement
     if bullet_state == "fire":
-        fire_bullet(bulletX,bulletY)
+        if(use_bullet == 0):
+            fire_bullet(bulletX,bulletY,bulletImg)
+        else:
+            fire_bullet(bulletX,bulletY,big_bulletImg)
         bulletY -=5*speed
     if bulletY<0:
         bullet_state = "ready"
