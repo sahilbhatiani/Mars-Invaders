@@ -40,7 +40,7 @@ for i in range(num_of_enemies):
     enemeyX.append(random.randint(0,735))
     enemeyY.append(random.randint(50,150))
     enemeyX_change.append(2*speed)
-    enemeyY_change.append(30)
+    enemeyY_change.append(60)
 
 
 
@@ -117,10 +117,10 @@ while running:
         enemeyX.append(random.randint(0,735))
         enemeyY.append(random.randint(50,150))
         enemeyX_change.append(2*speed)
-        enemeyY_change.append(30)
+        enemeyY_change.append(60)
         num_of_enemies = len(enemeyImg)
         tick = 0
-        if(new_enemy_timer>70):
+        if(new_enemy_timer>50):
             new_enemy_timer -= 5
        
 
