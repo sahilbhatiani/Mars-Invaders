@@ -41,6 +41,8 @@ for i in range(num_of_enemies):
     enemeyX_change.append(2*speed)
     enemeyY_change.append(30)
 
+
+
 #Bullet 
 
 #Ready - You can't see the bullet on the screen
@@ -87,13 +89,32 @@ def isCollision(enemeyX,enemeyY,bulletX,bulletY):
     else:
         return False
 
-
-
+new_enemy_timer = 100
+tick = 0
 #Game Loop
 running = True
 while running:
     pygame.display.flip()
     clock.tick(30)
+    
+    #Adds a new invader every few seconds.
+
+
+    if(tick<new_enemy_timer):
+        tick += 1
+    else:
+        enemeyImg.append(pygame.image.load('space_invader.png'))
+        enemeyX.append(random.randint(0,735))
+        enemeyY.append(random.randint(50,150))
+        enemeyX_change.append(2*speed)
+        enemeyY_change.append(30)
+        num_of_enemies = len(enemeyImg)
+        tick = 0
+        if(new_enemy_timer>33):
+            new_enemy_timer -= 5
+        print(new_enemy_timer)
+
+
 
     #RGB background
     #screen.fill((0,0,0))
@@ -127,10 +148,11 @@ while running:
     if playerX<0:
         playerX = 0
 
+    #This variable keeps track of which invader has been hit
+    hit_invader_index = -1
+
     #Setting boundaries for the invader
-
     for i in range(num_of_enemies):
-
         if enemeyY[i] > 440:
             for j in range(num_of_enemies):
                 enemeyY[j] = 2000
@@ -151,9 +173,21 @@ while running:
             bullet_state = "ready"
             bulletY = 480   
             score_value += 1
-            enemeyX[i] =  random.randint(0,735)
-            enemeyY[i] = random.randint(50,150)
+            # enemeyX[i] =  random.randint(0,735)
+            # enemeyY[i] = random.randint(50,150)
+            hit_invader_index = i
+
         enemy(enemeyX[i],enemeyY[i],i)
+
+    #Deletes invader that has been hit
+    if hit_invader_index != -1:
+        del enemeyImg[hit_invader_index]
+        del enemeyX[hit_invader_index]
+        del enemeyY[hit_invader_index]
+        del enemeyX_change[hit_invader_index]
+        del enemeyY_change[hit_invader_index]
+        num_of_enemies = len(enemeyImg) #updating enemy list number
+
 
     #Bullet movement
     if bullet_state == "fire":
